@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Routes, Route, useParams, Link } from 'react-router-dom';
 import { 
   Activity, 
   Clock, 
@@ -19,7 +19,8 @@ import {
   Box,
   Play,
   Square,
-  Timer
+  Timer,
+  Smartphone
 } from 'lucide-react';
 import { dummyCustomers } from '../data/dummyCustomers';
 import { 
@@ -37,8 +38,8 @@ import {
   Cell,
   Legend
 } from 'recharts';
+import { MSISDN } from '../types';
 
-// API Types for filtering
 const API_TYPES = [
   { id: 'all', name: 'All APIs' },
   { id: 'device-location', name: 'Device Location' },
@@ -46,7 +47,6 @@ const API_TYPES = [
   { id: 'number-verify', name: 'Number Verification' }
 ];
 
-// Error types for pie chart
 const ERROR_TYPES = [
   { name: 'Invalid Arguments', value: 35, color: '#EF4444' },
   { name: 'Authentication', value: 25, color: '#F59E0B' },
@@ -55,7 +55,6 @@ const ERROR_TYPES = [
   { name: 'Other', value: 5, color: '#6B7280' }
 ];
 
-// Generate dummy data for charts
 const generateTimeSeriesData = (days: number, apiType: string = 'all') => {
   const baseData = Array.from({ length: days }).map((_, i) => {
     const date = new Date(Date.now() - (days - i - 1) * 24 * 60 * 60 * 1000);
@@ -81,14 +80,12 @@ const generateTimeSeriesData = (days: number, apiType: string = 'all') => {
   }));
 };
 
-// Generate endpoint performance data
 const generateEndpointData = () => [
   { name: '/verify', success: 98.5, latency: 75, calls: 12500 },
   { name: '/retrieve', success: 99.2, latency: 82, calls: 8700 },
   { name: '/batch', success: 97.8, latency: 95, calls: 4300 }
 ];
 
-// Polling rate options
 const POLLING_RATES = [
   { value: 1000, label: 'Every Second' },
   { value: 5000, label: 'Every 5 Seconds' },
@@ -98,14 +95,12 @@ const POLLING_RATES = [
   { value: 3600000, label: 'Every Hour' }
 ];
 
-// API options
 const API_OPTIONS = [
   { value: 'location-retrieval', label: 'Device Location (Location-Retrieval)', disabled: false },
   { value: 'device-status', label: 'Device Status (Device-Reachability-Status)', disabled: true },
   { value: 'number-verify', label: 'Number Verify', disabled: true }
 ];
 
-// Mock data generator for location retrieval
 const generateLocationData = () => {
   return {
     timestamp: new Date().getTime(),
@@ -116,20 +111,35 @@ const generateLocationData = () => {
   };
 };
 
-function ApplicationDashboard({ customer }) {
+interface PollingDataPoint {
+  timestamp: number;
+  avgResponseTime: number;
+  deviceData: {
+    msisdnId: string;
+    latitude: number;
+    longitude: number;
+    responseTime: number;
+  }[];
+}
+
+function ApplicationDashboard({ customer, msisdns }) {
   const [selectedAPI, setSelectedAPI] = useState('location-retrieval');
   const [pollingRate, setPollingRate] = useState(5000);
   const [isPolling, setIsPolling] = useState(false);
-  const [pollingData, setPollingData] = useState<Array<any>>([]);
+  const [pollingData, setPollingData] = useState<PollingDataPoint[]>([]);
+  const [selectedPoint, setSelectedPoint] = useState<PollingDataPoint | null>(null);
   const [pollingStats, setPollingStats] = useState({
     totalRequests: 0,
     avgResponseTime: 0,
     successRate: 100,
     lastUpdate: null
   });
-  const pollingInterval = React.useRef<NodeJS.Timeout | null>(null);
+  const pollingInterval = useRef<NodeJS.Timeout | null>(null);
 
-  // Cleanup polling on unmount
+  const eligibleMSISDNs = msisdns.filter(
+    msisdn => (msisdn.type === 'BOTH' || msisdn.type === 'DATA') && msisdn.status === 'ALLOWED'
+  );
+
   useEffect(() => {
     return () => {
       if (pollingInterval.current) {
@@ -145,6 +155,7 @@ function ApplicationDashboard({ customer }) {
 
     setIsPolling(true);
     setPollingData([]);
+    setSelectedPoint(null);
     setPollingStats({
       totalRequests: 0,
       avgResponseTime: 0,
@@ -153,22 +164,31 @@ function ApplicationDashboard({ customer }) {
     });
 
     pollingInterval.current = setInterval(() => {
-      const newData = generateLocationData();
+      const timestamp = Date.now();
+      const deviceData = eligibleMSISDNs.map(msisdn => ({
+        msisdnId: msisdn.id,
+        latitude: 1.3521 + (Math.random() - 0.5) * 0.1,
+        longitude: 103.8198 + (Math.random() - 0.5) * 0.1,
+        responseTime: Math.floor(Math.random() * 200) + 50
+      }));
+
+      const avgResponseTime = deviceData.reduce((acc, curr) => acc + curr.responseTime, 0) / deviceData.length;
       
       setPollingData(prev => {
-        const newPollingData = [...prev, newData].slice(-20); // Keep last 20 points
-        
-        // Update stats
-        const avgResponseTime = newPollingData.reduce((acc, curr) => acc + curr.responseTime, 0) / newPollingData.length;
-        setPollingStats(prev => ({
-          totalRequests: prev.totalRequests + 1,
-          avgResponseTime: Math.round(avgResponseTime),
-          successRate: 100, // Mock success rate
-          lastUpdate: new Date()
-        }));
-        
-        return newPollingData;
+        const newPoint: PollingDataPoint = {
+          timestamp,
+          avgResponseTime,
+          deviceData
+        };
+        return [...prev, newPoint].slice(-20);
       });
+      
+      setPollingStats(prev => ({
+        totalRequests: prev.totalRequests + eligibleMSISDNs.length,
+        avgResponseTime: Math.round(avgResponseTime),
+        successRate: 100,
+        lastUpdate: new Date()
+      }));
     }, pollingRate);
   };
 
@@ -180,9 +200,12 @@ function ApplicationDashboard({ customer }) {
     setIsPolling(false);
   };
 
+  const handlePointClick = (point: PollingDataPoint) => {
+    setSelectedPoint(point);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Controls */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Select API</label>
@@ -245,16 +268,14 @@ function ApplicationDashboard({ customer }) {
             ) : (
               <>
                 <Play className="h-4 w-4 mr-2" />
-                Start Polling
+                Start Polling ({eligibleMSISDNs.length} devices)
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* Polling Results */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Real-time Graph */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-medium text-gray-900">Location Retrieval Polling</h3>
@@ -271,20 +292,23 @@ function ApplicationDashboard({ customer }) {
                 <YAxis />
                 <Tooltip 
                   labelFormatter={(value) => new Date(value).toLocaleTimeString()}
+                  formatter={(value) => [`${value}ms`, 'Avg Response Time']}
                 />
                 <Line 
                   type="monotone" 
-                  dataKey="responseTime" 
-                  name="Response Time (ms)" 
+                  dataKey="avgResponseTime"
+                  name="Avg Response Time" 
                   stroke="#3B82F6" 
                   strokeWidth={2}
+                  dot={{ onClick: (e) => e && handlePointClick(e.payload) }}
+                  activeDot={{ onClick: (e) => e && handlePointClick(e.payload) }}
+                  cursor="pointer"
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Metrics */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Polling Metrics</h3>
           <div className="grid grid-cols-2 gap-4">
@@ -309,6 +333,79 @@ function ApplicationDashboard({ customer }) {
           </div>
         </div>
       </div>
+
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <Smartphone className="h-5 w-5 text-blue-600" />
+            <h3 className="text-lg font-medium text-gray-900">Available MSISDNs for Device Location</h3>
+          </div>
+          {selectedPoint && (
+            <div className="text-sm text-gray-500">
+              Showing data from: {new Date(selectedPoint.timestamp).toLocaleString()}
+            </div>
+          )}
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  MSISDN
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Timestamp
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Lat
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Long
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {eligibleMSISDNs.map((msisdn) => {
+                const deviceData = selectedPoint?.deviceData.find(d => d.msisdnId === msisdn.id);
+                return (
+                  <tr key={msisdn.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {msisdn.number}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        msisdn.type === 'BOTH' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
+                      }`}>
+                        {msisdn.type}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        {msisdn.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {selectedPoint ? new Date(selectedPoint.timestamp).toLocaleString() : 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {deviceData?.latitude.toFixed(4) || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {deviceData?.longitude.toFixed(4) || 'N/A'}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
@@ -320,11 +417,35 @@ function CustomerDashboardPage() {
   const [timeRange, setTimeRange] = useState('30d');
   const [timeSeriesData, setTimeSeriesData] = useState(() => generateTimeSeriesData(30));
   const [endpointData] = useState(() => generateEndpointData());
+  const [metrics, setMetrics] = useState({
+    totalAPICalls: 24521,
+    avgResponseTime: 85,
+    errorRate: 0.12,
+    successRate: 99.88,
+    lastPollingRequests: 0
+  });
+  const [msisdns, setMsisdns] = useState<MSISDN[]>([]);
 
   useEffect(() => {
     const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
     setTimeSeriesData(generateTimeSeriesData(days, selectedAPI));
   }, [selectedAPI, timeRange]);
+
+  useEffect(() => {
+    const dummyMSISDNs: MSISDN[] = Array.from({ length: 40 }, (_, i) => ({
+      id: `msisdn-${i + 1}`,
+      number: `+65${Math.floor(80000000 + Math.random() * 20000000)}`,
+      status: Math.random() > 0.3 ? 'ALLOWED' : 'NOT_ALLOWED',
+      type: Math.random() > 0.5 ? 'BOTH' : (Math.random() > 0.5 ? 'VOICE' : 'DATA'),
+      activationDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
+      customerId: customerId || '',
+      location: {
+        lat: 1.3521 + (Math.random() - 0.5) * 0.1,
+        lng: 103.8198 + (Math.random() - 0.5) * 0.1
+      }
+    }));
+    setMsisdns(dummyMSISDNs);
+  }, [customerId]);
 
   if (!customer) {
     return <div>Customer not found</div>;
@@ -360,7 +481,6 @@ function CustomerDashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      {/* Add Back to Unified Dashboard Button */}
       <div className="mb-6">
         <Link
           to="/unified-dashboard"
@@ -371,7 +491,6 @@ function CustomerDashboardPage() {
         </Link>
       </div>
 
-      {/* Customer Info Header */}
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between">
           <div>
@@ -392,13 +511,12 @@ function CustomerDashboardPage() {
         </div>
       </div>
 
-      {/* API Usage Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Total API Calls</p>
-              <p className="text-2xl font-semibold text-gray-900">24,521</p>
+              <p className="text-2xl font-semibold text-gray-900">{metrics.totalAPICalls}</p>
             </div>
             <div className="bg-blue-100 rounded-full p-3">
               <Activity className="h-6 w-6 text-blue-600" />
@@ -411,7 +529,7 @@ function CustomerDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Avg Response Time</p>
-              <p className="text-2xl font-semibold text-gray-900">85ms</p>
+              <p className="text-2xl font-semibold text-gray-900">{metrics.avgResponseTime}ms</p>
             </div>
             <div className="bg-green-100 rounded-full p-3">
               <Clock className="h-6 w-6 text-green-600" />
@@ -424,7 +542,7 @@ function CustomerDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Error Rate</p>
-              <p className="text-2xl font-semibold text-gray-900">0.12%</p>
+              <p className="text-2xl font-semibold text-gray-900">{metrics.errorRate}%</p>
             </div>
             <div className="bg-red-100 rounded-full p-3">
               <AlertTriangle className="h-6 w-6 text-red-600" />
@@ -437,7 +555,7 @@ function CustomerDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Success Rate</p>
-              <p className="text-2xl font-semibold text-gray-900">99.88%</p>
+              <p className="text-2xl font-semibold text-gray-900">{metrics.successRate}%</p>
             </div>
             <div className="bg-green-100 rounded-full p-3">
               <CheckCircle2 className="h-6 w-6 text-green-600" />
@@ -447,9 +565,7 @@ function CustomerDashboardPage() {
         </div>
       </div>
 
-      {/* Main Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* API Calls Trend */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-medium text-gray-900">API Calls Trend</h2>
@@ -476,7 +592,6 @@ function CustomerDashboardPage() {
           </div>
         </div>
 
-        {/* Response Time Distribution */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-medium text-gray-900">Response Time Distribution</h2>
@@ -495,7 +610,6 @@ function CustomerDashboardPage() {
           </div>
         </div>
 
-        {/* Error Distribution */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-medium text-gray-900">Error Distribution</h2>
@@ -524,7 +638,6 @@ function CustomerDashboardPage() {
           </div>
         </div>
 
-        {/* Endpoint Performance */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-medium text-gray-900">Endpoint Performance</h2>
@@ -544,9 +657,7 @@ function CustomerDashboardPage() {
         </div>
       </div>
 
-      {/* Additional Metrics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Top Endpoints */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
             <Network className="h-5 w-5 text-blue-600" />
@@ -555,6 +666,7 @@ function CustomerDashboardPage() {
           <div className="space-y-4">
             {endpointData.map((endpoint, i) => (
               <div key={i} className="flex items-center justify-between">
+                
                 <span className="text-sm text-gray-600">{endpoint.name}</span>
                 <span className="text-sm font-medium text-gray-900">
                   {endpoint.calls.toLocaleString()} calls
@@ -564,7 +676,6 @@ function CustomerDashboardPage() {
           </div>
         </div>
 
-        {/* Location Distribution */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
             <MapPin className="h-5 w-5 text-blue-600" />
@@ -586,7 +697,6 @@ function CustomerDashboardPage() {
           </div>
         </div>
 
-        {/* API Health */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
             <Shield className="h-5 w-5 text-blue-600" />
@@ -613,13 +723,12 @@ function CustomerDashboardPage() {
         </div>
       </div>
 
-      {/* Application Dashboard */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center space-x-2 mb-6">
           <Layout className="h-5 w-5 text-blue-600" />
           <h2 className="text-lg font-medium text-gray-900">Application Dashboard</h2>
         </div>
-        <ApplicationDashboard customer={customer} />
+        <ApplicationDashboard customer={customer} msisdns={msisdns} />
       </div>
     </div>
   );
