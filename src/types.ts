@@ -48,4 +48,5 @@ export interface MSISDN {
   type: 'VOICE' | 'DATA' | 'BOTH';
   activationDate: string;
   customerId: string;
+  location: Location;
 }
