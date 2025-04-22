@@ -41,25 +41,25 @@ export function APIDetails({ api, onClose, onOrder }: APIDetailsProps) {
               <div 
                 className={`p-4 rounded-lg border-2 cursor-pointer ${
                   plan === 'basic' 
-                    ? 'border-blue-500 bg-blue-50' 
+                    ? 'border-green-500 bg-green-50' 
                     : 'border-gray-200'
                 }`}
                 onClick={() => setPlan('basic')}
               >
                 <h4 className="font-semibold">Basic Plan</h4>
-                <p className="text-2xl font-bold text-blue-600">${api.pricing.basic}/call</p>
+                <p className="text-2xl font-bold text-green-600">${api.pricing.basic}/call</p>
                 <p className="text-gray-600 mt-2">Standard API access with basic features</p>
               </div>
               <div 
                 className={`p-4 rounded-lg border-2 cursor-pointer ${
                   plan === 'premium' 
-                    ? 'border-blue-500 bg-blue-50' 
+                    ? 'border-green-500 bg-green-50' 
                     : 'border-gray-200'
                 }`}
                 onClick={() => setPlan('premium')}
               >
                 <h4 className="font-semibold">Premium Plan</h4>
-                <p className="text-2xl font-bold text-blue-600">${api.pricing.premium}/call</p>
+                <p className="text-2xl font-bold text-green-600">${api.pricing.premium}/call</p>
                 <p className="text-gray-600 mt-2">Advanced features with priority support</p>
               </div>
             </div>
@@ -74,14 +74,14 @@ export function APIDetails({ api, onClose, onOrder }: APIDetailsProps) {
                 step="100"
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
               />
             </div>
 
             <div className="mt-6">
               <button
                 onClick={handleOrder}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
               >
                 Order Now
               </button>

@@ -74,8 +74,8 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ totalCustomers, activeC
               <p className="text-sm font-medium text-gray-500">Total Customers</p>
               <p className="text-2xl font-semibold text-gray-900">{totalCustomers}</p>
             </div>
-            <div className="bg-blue-100 rounded-full p-3">
-              <Users className="h-6 w-6 text-blue-600" />
+            <div className="bg-green-100 rounded-full p-3">
+              <Users className="h-6 w-6 text-green-600" />
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ totalCustomers, activeC
         <div className="flex justify-end">
           <Link
             to="/unified-dashboard"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             Go to Unified Dashboard
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -180,10 +180,10 @@ function DashboardPage() {
   const [suspendedCustomers, setSuspendedCustomers] = useState(0);
 
   const [accountManagers] = useState<AccountManager[]>([
-    { id: '1', name: 'John Smith', email: 'john.smith@starhub.com', customerCount: 0 },
-    { id: '2', name: 'Sarah Lee', email: 'sarah.lee@starhub.com', customerCount: 0 },
-    { id: '3', name: 'Michael Wong', email: 'michael.wong@starhub.com', customerCount: 0 },
-    { id: '4', name: 'Lisa Chen', email: 'lisa.chen@starhub.com', customerCount: 0 },
+    { id: '1', name: 'John Smith', email: 'john.smith@Sirius.com', customerCount: 0 },
+    { id: '2', name: 'Sarah Lee', email: 'sarah.lee@Sirius.com', customerCount: 0 },
+    { id: '3', name: 'Michael Wong', email: 'michael.wong@Sirius.com', customerCount: 0 },
+    { id: '4', name: 'Lisa Chen', email: 'lisa.chen@Sirius.com', customerCount: 0 },
   ]);
 
   const [newCustomer, setNewCustomer] = useState<Customer>({
@@ -640,12 +640,12 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
       <div className="mb-6 bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <Upload className="h-5 w-5 text-blue-600" />
+            <Upload className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">Bulk Customer Upload</h2>
           </div>
           <button
             onClick={handleDownloadSample}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             <FileDown className="h-4 w-4 mr-2" />
             Download Sample CSV
@@ -657,7 +657,7 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
             type="file"
             accept=".csv"
             onChange={handleFileUpload}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
           />
           <div className="text-sm text-gray-500">
             Upload a CSV file with customer details
@@ -669,7 +669,7 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
         {/* Single Customer Form */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center space-x-2 mb-6">
-            <UserPlus className="h-5 w-5 text-blue-600" />
+            <UserPlus className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">Add Customer</h2>
           </div>
 
@@ -685,11 +685,11 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
                 <div
                   key={index}
                   className={`flex flex-col items-center ${
-                    currentStep > index ? 'text-blue-600' : 'text-gray-400'
+                    currentStep > index ? 'text-green-600' : 'text-gray-400'
                   }`}
                 >
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    currentStep > index ? 'bg-blue-100' : 'bg-gray-100'
+                    currentStep > index ? 'bg-green-100' : 'bg-gray-100'
                   }`}>
                     <step.icon className="w-5 h-5" />
                   </div>
@@ -700,7 +700,7 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
             <div className="relative mt-2">
               <div className="absolute left-0 right-0 h-1 bg-gray-200">
                 <div
-                  className="absolute h-1 bg-blue-600 transition-all duration-300"
+                  className="absolute h-1 bg-green-600 transition-all duration-300"
                   style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
                 />
               </div>
@@ -715,14 +715,14 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
                 <button
                   type="button"
                   onClick={() => setCurrentStep(prev => prev - 1)}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                 >
                   Previous
                 </button>
               )}
               <button
                 type="submit"
-                className="ml-auto inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="ml-auto inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 {currentStep === 4 ? 'Submit' : 
                   'Next'}
@@ -734,7 +734,7 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
         {/* Singapore Map */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center space-x-2 mb-4">
-            <MapPin className="h-5 w-5 text-blue-600" />
+            <MapPin className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">Customer Locations</h2>
           </div>
           <div className="h-[400px] rounded-lg overflow-hidden">
@@ -777,7 +777,7 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
           <div className="flex space-x-4">
             <button
               onClick={handleDownload}
-              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               <Download className="h-4 w-4 mr-2" />
               Export CSV
@@ -849,7 +849,7 @@ Global Solutions Pte Ltd,contact@globalsolutions.com,+65 6321 7890,B2B,ACC002,1 
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        customer.type === 'B2B' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                        customer.type === 'B2B' ? 'bg-green-100 text-green-800' : 'bg-green-100 text-green-800'
                       }`}>
                         {customer.type}
                       </span>

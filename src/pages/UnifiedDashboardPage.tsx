@@ -139,7 +139,7 @@ function UnifiedDashboardPage() {
               <select
                 value="all"
                 onChange={(e) => handleCustomerChange(e.target.value)}
-                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
               >
                 <option value="all">All Customers</option>
                 {dummyCustomers.map(customer => (
@@ -154,7 +154,7 @@ function UnifiedDashboardPage() {
               <select
                 value={selectedAPI}
                 onChange={(e) => setSelectedAPI(e.target.value)}
-                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
               >
                 {API_TYPES.map(api => (
                   <option key={api.id} value={api.id}>{api.name}</option>
@@ -166,7 +166,7 @@ function UnifiedDashboardPage() {
               <select
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
-                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
               >
                 {TIME_RANGES.map(range => (
                   <option key={range.value} value={range.value}>{range.label}</option>
@@ -182,7 +182,7 @@ function UnifiedDashboardPage() {
           title="Total API Calls"
           value={totalAPICalls.toLocaleString()}
           trend="↑ 15% from last period"
-          icon={<Activity className="h-6 w-6 text-blue-600" />}
+          icon={<Activity className="h-6 w-6 text-green-600" />}
         />
         
         <MetricCard
@@ -321,7 +321,7 @@ function UnifiedDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
-            <Network className="h-5 w-5 text-blue-600" />
+            <Network className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">API Performance</h2>
           </div>
           <div className="space-y-4">
@@ -341,7 +341,7 @@ function UnifiedDashboardPage() {
 
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
-            <Users className="h-5 w-5 text-blue-600" />
+            <Users className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">Top Customers</h2>
           </div>
           <div className="space-y-4">
@@ -358,7 +358,7 @@ function UnifiedDashboardPage() {
 
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
-            <Shield className="h-5 w-5 text-blue-600" />
+            <Shield className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">System Health</h2>
           </div>
           <div className="space-y-4">

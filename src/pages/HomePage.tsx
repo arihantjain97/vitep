@@ -26,23 +26,23 @@ function HomePage() {
 
   const handleOrder = (details: OrderDetails) => {
     console.log('Order placed:', details);
-    alert('Order placed successfully! A StarHub representative will contact you shortly.');
+    alert('Order placed successfully! A Sirius representative will contact you shortly.');
     setSelectedAPI(null);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#00A6ED] to-[#005BAC]">
+      <header className="bg-gradient-to-r from-[#00D84B] to-[#006F32]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img 
                 src="https://images.unsplash.com/photo-1690165514349-501b6e2d7e44?q=80&w=100" 
-                alt="StarHub Logo" 
+                alt="Sirius Logo" 
                 className="h-10 w-auto"
               />
-              <h1 className="ml-3 text-2xl font-bold text-white">StarHub API Marketplace</h1>
+              <h1 className="ml-3 text-2xl font-bold text-white">Sirius API Platform</h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-white text-sm">
@@ -50,7 +50,7 @@ function HomePage() {
               </div>
               <Link 
                 to="/login"
-                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 <User className="h-4 w-4 mr-2" />
                 Management Portal
@@ -67,7 +67,7 @@ function HomePage() {
             Enterprise APIs for Singapore Businesses
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl">
-            Access StarHub's powerful suite of enterprise APIs. Built for Singapore's leading businesses, 
+            Access Sirius's powerful suite of enterprise APIs. Built for Singapore's leading businesses, 
             with local support and compliance with Singapore regulations.
           </p>
         </div>
@@ -132,10 +132,10 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-lg font-semibold mb-4">StarHub Enterprise</h3>
+              <h3 className="text-lg font-semibold mb-4">Sirius Enterprise</h3>
               <p className="text-gray-400">
                 67 Ubi Avenue 1<br />
-                #05-01 StarHub Green<br />
+                #05-01 Sirius Green<br />
                 Singapore 408942
               </p>
             </div>
@@ -144,7 +144,7 @@ function HomePage() {
               <p className="text-gray-400">
                 Enterprise Sales: 1800 888 8888<br />
                 Technical Support: 1800 888 9999<br />
-                Email: enterprise@starhub.com
+                Email: enterprise@Sirius.com
               </p>
             </div>
             <div>

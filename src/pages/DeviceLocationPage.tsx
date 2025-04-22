@@ -159,7 +159,7 @@ function DeviceLocationPage() {
     };
     
     console.log('Order details:', orderDetails);
-    alert('Order placed successfully! A StarHub representative will contact you shortly.');
+    alert('Order placed successfully! A Sirius representative will contact you shortly.');
   };
 
   const renderApiDocumentation = () => {
@@ -335,7 +335,7 @@ function DeviceLocationPage() {
           <div className="flex items-center">
             <Link to="/" className="text-white hover:text-gray-200 flex items-center">
               <ArrowLeft className="h-5 w-5 mr-2" />
-              Back to Marketplace
+              Back to Platform
             </Link>
           </div>
         </div>
@@ -354,13 +354,13 @@ function DeviceLocationPage() {
                 <button
                   className={`w-full p-4 text-left rounded-lg border ${
                     selectedAPI === 'verification'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300'
                   }`}
                   onClick={() => setSelectedAPI('verification')}
                 >
                   <div className="flex items-start">
-                    <MapPin className="h-5 w-5 text-blue-500 mt-1 mr-2" />
+                    <MapPin className="h-5 w-5 text-green-500 mt-1 mr-2" />
                     <div>
                       <h3 className="font-medium">Location Verification</h3>
                       <p className="text-sm text-gray-600">
@@ -373,13 +373,13 @@ function DeviceLocationPage() {
                 <button
                   className={`w-full p-4 text-left rounded-lg border ${
                     selectedAPI === 'retrieval'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300'
                   }`}
                   onClick={() => setSelectedAPI('retrieval')}
                 >
                   <div className="flex items-start">
-                    <Crosshair className="h-5 w-5 text-blue-500 mt-1 mr-2" />
+                    <Crosshair className="h-5 w-5 text-green-500 mt-1 mr-2" />
                     <div>
                       <h3 className="font-medium">Location Retrieval</h3>
                       <p className="text-sm text-gray-600">
@@ -398,8 +398,8 @@ function DeviceLocationPage() {
                 <button
                   className={`w-full p-4 text-left rounded-lg border ${
                     coverageType === 'nationwide'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300'
                   }`}
                   onClick={() => setCoverageType('nationwide')}
                 >
@@ -412,8 +412,8 @@ function DeviceLocationPage() {
                 <button
                   className={`w-full p-4 text-left rounded-lg border ${
                     coverageType === 'custom'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300'
                   }`}
                   onClick={() => setCoverageType('custom')}
                 >
@@ -432,13 +432,13 @@ function DeviceLocationPage() {
                 <button
                   className={`p-4 rounded-lg border ${
                     plan === 'basic'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300'
                   }`}
                   onClick={() => setPlan('basic')}
                 >
                   <h3 className="font-medium">Basic</h3>
-                  <p className="text-xl font-bold text-blue-600">
+                  <p className="text-xl font-bold text-green-600">
                     ${pricing[selectedAPI][coverageType].basic}
                     <span className="text-sm font-normal text-gray-600">/call</span>
                   </p>
@@ -447,13 +447,13 @@ function DeviceLocationPage() {
                 <button
                   className={`p-4 rounded-lg border ${
                     plan === 'premium'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300'
                   }`}
                   onClick={() => setPlan('premium')}
                 >
                   <h3 className="font-medium">Premium</h3>
-                  <p className="text-xl font-bold text-blue-600">
+                  <p className="text-xl font-bold text-green-600">
                     ${pricing[selectedAPI][coverageType].premium}
                     <span className="text-sm font-normal text-gray-600">/call</span>
                   </p>
@@ -472,14 +472,14 @@ function DeviceLocationPage() {
                 step="100"
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
-                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
               />
             </div>
 
             {/* Order Button */}
             <button
               onClick={handleOrder}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+              className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors"
             >
               Order Now
             </button>
@@ -504,14 +504,14 @@ function DeviceLocationPage() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="border-b border-gray-200">
                 <div className="flex items-center px-6 py-4">
-                  <Info className="h-5 w-5 text-blue-500 mr-2" />
+                  <Info className="h-5 w-5 text-green-500 mr-2" />
                   <h2 className="text-lg font-semibold">API Documentation</h2>
                 </div>
                 <div className="px-6 flex space-x-4">
                   <button
                     className={`pb-4 px-2 text-sm font-medium border-b-2 ${
                       activeTab === 'overview'
-                        ? 'border-blue-500 text-blue-600'
+                        ? 'border-green-500 text-green-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                     onClick={() => setActiveTab('overview')}
@@ -522,7 +522,7 @@ function DeviceLocationPage() {
                   <button
                     className={`pb-4 px-2 text-sm font-medium border-b-2 ${
                       activeTab === 'endpoints'
-                        ? 'border-blue-500 text-blue-600'
+                        ? 'border-green-500 text-green-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                     onClick={() => setActiveTab('endpoints')}
@@ -533,7 +533,7 @@ function DeviceLocationPage() {
                   <button
                     className={`pb-4 px-2 text-sm font-medium border-b-2 ${
                       activeTab === 'schemas'
-                        ? 'border-blue-500 text-blue-600'
+                        ? 'border-green-500 text-green-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                     onClick={() => setActiveTab('schemas')}

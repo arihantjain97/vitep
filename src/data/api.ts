@@ -3,14 +3,14 @@ import { API } from '../types';
 export const apis: API[] = [
   {
     id: 'device-status',
-    name: 'StarHub Device Status API',
-    description: 'Real-time device status monitoring for StarHub network devices with Singapore data center hosting.',
+    name: 'Sirius Device Status API',
+    description: 'Real-time device status monitoring for Sirius network devices with Singapore data center hosting.',
     category: 'device',
     status: 'available',
-    documentation: `# StarHub Device Status API
+    documentation: `# Sirius Device Status API
 
 ## Overview
-The Device Status API provides real-time monitoring capabilities for IoT and mobile devices across StarHub's Singapore network. Get instant access to critical device metrics and operational states, with data processed in our Singapore data centers.
+The Device Status API provides real-time monitoring capabilities for IoT and mobile devices across Sirius's Singapore network. Get instant access to critical device metrics and operational states, with data processed in our Singapore data centers.
 
 ## Singapore Compliance
 - PDPA (Personal Data Protection Act) compliant
@@ -34,7 +34,7 @@ Retrieve the current status of a specific device.
 
 **Example Request:**
 \`\`\`curl
-curl -X GET "https://api.starhub.sg/v1/devices/status?device_id=dev_123" \\
+curl -X GET "https://api.Sirius.sg/v1/devices/status?device_id=dev_123" \\
   -H "Authorization: Bearer <your_api_key>"
 \`\`\`
 
@@ -48,7 +48,7 @@ curl -X GET "https://api.starhub.sg/v1/devices/status?device_id=dev_123" \\
   "last_seen": "2025-03-15T14:30:00+08:00",
   "connectivity": {
     "type": "cellular",
-    "network": "StarHub 5G",
+    "network": "Sirius 5G",
     "ip_address": "192.168.1.100"
   }
 }
@@ -72,7 +72,7 @@ Retrieve status information for multiple devices in a single request.
 ## Support
 24/7 technical support available:
 - Phone: 1800 888 9999
-- Email: api.support@starhub.com
+- Email: api.support@Sirius.com
 
 ## Error Codes
 - 400: Invalid request parameters
@@ -86,14 +86,14 @@ Retrieve status information for multiple devices in a single request.
   },
   {
     id: 'device-location',
-    name: 'StarHub Device Location API',
-    description: 'Accurate device location tracking across Singapore with StarHub network integration.',
+    name: 'Sirius Device Location API',
+    description: 'Accurate device location tracking across Singapore with Sirius network integration.',
     category: 'location',
     status: 'available',
-    documentation: `# StarHub Device Location API
+    documentation: `# Sirius Device Location API
 
 ## Overview
-Track device locations with high accuracy across Singapore using StarHub's network infrastructure, including GPS, Cell Tower Triangulation, and Wi-Fi positioning.
+Track device locations with high accuracy across Singapore using Sirius's network infrastructure, including GPS, Cell Tower Triangulation, and Wi-Fi positioning.
 
 ## Singapore Coverage
 - Nationwide coverage across Singapore
@@ -119,7 +119,7 @@ Get the current location of a device in Singapore.
 
 **Example Request:**
 \`\`\`curl
-curl -X GET "https://api.starhub.sg/v1/devices/location?device_id=dev_123&accuracy=high" \\
+curl -X GET "https://api.Sirius.sg/v1/devices/location?device_id=dev_123&accuracy=high" \\
   -H "Authorization: Bearer <your_api_key>"
 \`\`\`
 
@@ -164,7 +164,7 @@ Retrieve location history for a device within Singapore.
 ## Support
 24/7 technical support available:
 - Phone: 1800 888 9999
-- Email: api.support@starhub.com
+- Email: api.support@Sirius.com
 
 ## Error Codes
 - 400: Invalid request parameters
@@ -178,14 +178,14 @@ Retrieve location history for a device within Singapore.
   },
   {
     id: 'number-verify',
-    name: 'StarHub Number Verification API',
-    description: 'Verify Singapore phone numbers through StarHub carrier network with PDPA compliance.',
+    name: 'Sirius Number Verification API',
+    description: 'Verify Singapore phone numbers through Sirius carrier network with PDPA compliance.',
     category: 'verification',
     status: 'available',
-    documentation: `# StarHub Number Verification API
+    documentation: `# Sirius Number Verification API
 
 ## Overview
-Secure phone number verification service that validates Singapore numbers through StarHub's carrier network. Perfect for user authentication, fraud prevention, and compliance with Singapore regulations.
+Secure phone number verification service that validates Singapore numbers through Sirius's carrier network. Perfect for user authentication, fraud prevention, and compliance with Singapore regulations.
 
 ## Singapore Compliance
 - PDPA compliant verification process
@@ -245,7 +245,7 @@ Get detailed information about a Singapore phone number.
   "phone_number": "+6591234567",
   "valid": true,
   "carrier": {
-    "name": "StarHub",
+    "name": "Sirius",
     "type": "mobile"
   },
   "line_type": "postpaid",
@@ -260,7 +260,7 @@ Get detailed information about a Singapore phone number.
 ## Support
 24/7 technical support available:
 - Phone: 1800 888 9999
-- Email: api.support@starhub.com
+- Email: api.support@Sirius.com
 
 ## Error Codes
 - 400: Invalid phone number or request parameters

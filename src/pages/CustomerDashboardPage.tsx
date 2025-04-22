@@ -212,7 +212,7 @@ function ApplicationDashboard({ customer, msisdns }) {
           <select
             value={selectedAPI}
             onChange={(e) => setSelectedAPI(e.target.value)}
-            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
           >
             {API_OPTIONS.map(option => (
               <option 
@@ -231,7 +231,7 @@ function ApplicationDashboard({ customer, msisdns }) {
           <select
             value={pollingRate}
             onChange={(e) => setPollingRate(Number(e.target.value))}
-            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
           >
             {POLLING_RATES.map(rate => (
               <option key={rate.value} value={rate.value}>
@@ -247,7 +247,7 @@ function ApplicationDashboard({ customer, msisdns }) {
             type="text"
             value={customer.name}
             disabled
-            className="block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
           />
         </div>
 
@@ -337,7 +337,7 @@ function ApplicationDashboard({ customer, msisdns }) {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <Smartphone className="h-5 w-5 text-blue-600" />
+            <Smartphone className="h-5 w-5 text-green-600" />
             <h3 className="text-lg font-medium text-gray-900">Available MSISDNs for Device Location</h3>
           </div>
           {selectedPoint && (
@@ -456,7 +456,7 @@ function CustomerDashboardPage() {
       <select
         value={selectedAPI}
         onChange={(e) => setSelectedAPI(e.target.value)}
-        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
       >
         {API_TYPES.map(api => (
           <option key={api.id} value={api.id}>{api.name}</option>
@@ -470,7 +470,7 @@ function CustomerDashboardPage() {
       <select
         value={timeRange}
         onChange={(e) => setTimeRange(e.target.value)}
-        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
       >
         <option value="7d">Last 7 days</option>
         <option value="30d">Last 30 days</option>
@@ -484,7 +484,7 @@ function CustomerDashboardPage() {
       <div className="mb-6">
         <Link
           to="/unified-dashboard"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Unified Dashboard
@@ -518,8 +518,8 @@ function CustomerDashboardPage() {
               <p className="text-sm font-medium text-gray-500">Total API Calls</p>
               <p className="text-2xl font-semibold text-gray-900">{metrics.totalAPICalls}</p>
             </div>
-            <div className="bg-blue-100 rounded-full p-3">
-              <Activity className="h-6 w-6 text-blue-600" />
+            <div className="bg-green-100 rounded-full p-3">
+              <Activity className="h-6 w-6 text-green-600" />
             </div>
           </div>
           <p className="mt-2 text-sm text-green-600">↑ 12% from last month</p>
@@ -660,7 +660,7 @@ function CustomerDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
-            <Network className="h-5 w-5 text-blue-600" />
+            <Network className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">Top Endpoints</h2>
           </div>
           <div className="space-y-4">
@@ -678,7 +678,7 @@ function CustomerDashboardPage() {
 
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
-            <MapPin className="h-5 w-5 text-blue-600" />
+            <MapPin className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">Location Distribution</h2>
           </div>
           <div className="space-y-4">
@@ -699,7 +699,7 @@ function CustomerDashboardPage() {
 
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center space-x-2 mb-4">
-            <Shield className="h-5 w-5 text-blue-600" />
+            <Shield className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">API Health</h2>
           </div>
           <div className="space-y-4">
@@ -725,7 +725,7 @@ function CustomerDashboardPage() {
 
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center space-x-2 mb-6">
-          <Layout className="h-5 w-5 text-blue-600" />
+          <Layout className="h-5 w-5 text-green-600" />
           <h2 className="text-lg font-medium text-gray-900">Application Dashboard</h2>
         </div>
         <ApplicationDashboard customer={customer} msisdns={msisdns} />

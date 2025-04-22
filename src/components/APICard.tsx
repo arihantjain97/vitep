@@ -23,8 +23,8 @@ export function APICard({ api, onClick }: APICardProps) {
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-blue-50 rounded-lg">
-            <Icon className="w-6 h-6 text-blue-600" />
+          <div className="p-2 bg-green-50 rounded-lg">
+            <Icon className="w-6 h-6 text-green-600" />
           </div>
           <h3 className="text-lg font-semibold text-gray-900">{api.name}</h3>
         </div>
@@ -36,7 +36,7 @@ export function APICard({ api, onClick }: APICardProps) {
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium text-gray-600">From</span>
-          <span className="text-sm font-bold text-blue-600">${api.pricing.basic}/call</span>
+          <span className="text-sm font-bold text-green-600">${api.pricing.basic}/call</span>
         </div>
         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
           api.status === 'available' 

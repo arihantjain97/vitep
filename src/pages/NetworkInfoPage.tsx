@@ -131,12 +131,12 @@ function NetworkInfoPage() {
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <Upload className="h-5 w-5 text-blue-600" />
+            <Upload className="h-5 w-5 text-green-600" />
             <h2 className="text-lg font-medium text-gray-900">Upload MSISDN Information</h2>
           </div>
           <button
             onClick={handleDownloadSample}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             <FileDown className="h-4 w-4 mr-2" />
             Download Sample CSV
@@ -148,7 +148,7 @@ function NetworkInfoPage() {
             type="file"
             accept=".csv"
             onChange={handleFileUpload}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
           />
         </div>
       </div>
@@ -170,7 +170,7 @@ function NetworkInfoPage() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search MSISDNs..."
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
+                  className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
             </div>
@@ -206,7 +206,7 @@ function NetworkInfoPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       msisdn.type === 'BOTH' ? 'bg-purple-100 text-purple-800' :
-                      msisdn.type === 'VOICE' ? 'bg-blue-100 text-blue-800' :
+                      msisdn.type === 'VOICE' ? 'bg-green-100 text-green-800' :
                       'bg-green-100 text-green-800'
                     }`}>
                       {msisdn.type}
@@ -288,7 +288,7 @@ function NetworkInfoPage() {
                     onClick={() => setCurrentPage(page)}
                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                       page === currentPage
-                        ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                        ? 'z-10 bg-green-50 border-green-500 text-green-600'
                         : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                     }`}
                   >
