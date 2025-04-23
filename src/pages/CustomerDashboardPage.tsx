@@ -20,9 +20,14 @@ import {
   Play,
   Square,
   Timer,
-  Smartphone
+  Smartphone,
+  Download,
+  Trash2
 } from 'lucide-react';
 import { dummyCustomers } from '../data/dummyCustomers';
+import { msisdns } from '../data/msisdns';
+import { dashboardMetrics } from '../data/dashboardMetrics';
+import { getCustomerSessions, savePollingSession, deletePollingSession, downloadSessionData } from '../data/pollingSessions';
 import { 
   LineChart, 
   Line, 
@@ -101,16 +106,6 @@ const API_OPTIONS = [
   { value: 'number-verify', label: 'Number Verify', disabled: true }
 ];
 
-const generateLocationData = () => {
-  return {
-    timestamp: new Date().getTime(),
-    latitude: 1.3521 + (Math.random() - 0.5) * 0.1,
-    longitude: 103.8198 + (Math.random() - 0.5) * 0.1,
-    accuracy: Math.floor(Math.random() * 100) + 50,
-    responseTime: Math.floor(Math.random() * 200) + 50
-  };
-};
-
 interface PollingDataPoint {
   timestamp: number;
   avgResponseTime: number;
@@ -132,13 +127,27 @@ function ApplicationDashboard({ customer, msisdns }) {
     totalRequests: 0,
     avgResponseTime: 0,
     successRate: 100,
-    lastUpdate: null
+    lastUpdate: null as Date | null
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sessions, setSessions] = useState(() => getCustomerSessions(customer.customerId));
+  const [msisdnPage, setMsisdnPage] = useState(1);
+  const itemsPerPage = 5;
+  const msisdnsPerPage = 5;
   const pollingInterval = useRef<NodeJS.Timeout | null>(null);
 
   const eligibleMSISDNs = msisdns.filter(
     msisdn => (msisdn.type === 'BOTH' || msisdn.type === 'DATA') && msisdn.status === 'ALLOWED'
   );
+
+  const paginatedMSISDNs = eligibleMSISDNs.slice(
+    (msisdnPage - 1) * msisdnsPerPage,
+    msisdnPage * msisdnsPerPage
+  );
+
+  useEffect(() => {
+    setSessions(getCustomerSessions(customer.customerId));
+  }, [customer.customerId]);
 
   useEffect(() => {
     return () => {
@@ -167,22 +176,26 @@ function ApplicationDashboard({ customer, msisdns }) {
       const timestamp = Date.now();
       const deviceData = eligibleMSISDNs.map(msisdn => ({
         msisdnId: msisdn.id,
-        latitude: 1.3521 + (Math.random() - 0.5) * 0.1,
-        longitude: 103.8198 + (Math.random() - 0.5) * 0.1,
+        latitude: msisdn.location.lat + (Math.random() - 0.5) * 0.01,
+        longitude: msisdn.location.lng + (Math.random() - 0.5) * 0.01,
         responseTime: Math.floor(Math.random() * 200) + 50
       }));
 
       const avgResponseTime = deviceData.reduce((acc, curr) => acc + curr.responseTime, 0) / deviceData.length;
-      
+
+      const newPoint = {
+        timestamp,
+        avgResponseTime,
+        deviceData
+      };
+
       setPollingData(prev => {
-        const newPoint: PollingDataPoint = {
-          timestamp,
-          avgResponseTime,
-          deviceData
-        };
-        return [...prev, newPoint].slice(-20);
+        const updatedData = [...prev, newPoint].slice(-20);
+        return updatedData;
       });
-      
+
+      setSelectedPoint(newPoint);
+
       setPollingStats(prev => ({
         totalRequests: prev.totalRequests + eligibleMSISDNs.length,
         avgResponseTime: Math.round(avgResponseTime),
@@ -198,6 +211,26 @@ function ApplicationDashboard({ customer, msisdns }) {
       pollingInterval.current = null;
     }
     setIsPolling(false);
+
+    if (pollingData.length > 0) {
+      savePollingSession(customer.customerId, {
+        timestamp: Date.now(),
+        apiType: selectedAPI,
+        pollingRate,
+        deviceCount: eligibleMSISDNs.length,
+        data: pollingData
+      });
+      setSessions(getCustomerSessions(customer.customerId));
+    }
+  };
+
+  const handleDeleteSession = (sessionId: string) => {
+    deletePollingSession(customer.customerId, sessionId);
+    setSessions(getCustomerSessions(customer.customerId));
+  };
+
+  const handleDownloadSession = (session: PollingSession) => {
+    downloadSessionData(session);
   };
 
   const handlePointClick = (point: PollingDataPoint) => {
@@ -283,7 +316,15 @@ function ApplicationDashboard({ customer, msisdns }) {
           </div>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={pollingData}>
+              <LineChart
+                data={pollingData}
+                onClick={(e: any) => {
+                  if (e && e.activePayload && e.activePayload.length > 0) {
+                    const clickedPoint = e.activePayload[0].payload;
+                    setSelectedPoint(clickedPoint);
+                  }
+                }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="timestamp"
@@ -300,9 +341,8 @@ function ApplicationDashboard({ customer, msisdns }) {
                   name="Avg Response Time" 
                   stroke="#3B82F6" 
                   strokeWidth={2}
-                  dot={{ onClick: (e) => e && handlePointClick(e.payload) }}
-                  activeDot={{ onClick: (e) => e && handlePointClick(e.payload) }}
-                  cursor="pointer"
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -338,7 +378,7 @@ function ApplicationDashboard({ customer, msisdns }) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <Smartphone className="h-5 w-5 text-green-600" />
-            <h3 className="text-lg font-medium text-gray-900">Available MSISDNs for Device Location</h3>
+            <h3 className="text-lg font-medium text-gray-900">Most Recent Polling Session (Historical Data) for Device Location</h3>
           </div>
           {selectedPoint && (
             <div className="text-sm text-gray-500">
@@ -371,7 +411,7 @@ function ApplicationDashboard({ customer, msisdns }) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {eligibleMSISDNs.map((msisdn) => {
+              {paginatedMSISDNs.map((msisdn) => {
                 const deviceData = selectedPoint?.deviceData.find(d => d.msisdnId === msisdn.id);
                 return (
                   <tr key={msisdn.id}>
@@ -405,6 +445,119 @@ function ApplicationDashboard({ customer, msisdns }) {
             </tbody>
           </table>
         </div>
+        {Math.ceil(eligibleMSISDNs.length / msisdnsPerPage) > 1 && (
+          <div className="flex justify-center mt-4 space-x-2">
+            {Array.from({ length: Math.ceil(eligibleMSISDNs.length / msisdnsPerPage) }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setMsisdnPage(i + 1)}
+                className={`px-3 py-1 rounded ${
+                  msisdnPage === i + 1
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium text-gray-900">Past Polling Sessions</h3>
+        </div>
+        {sessions.length === 0 ? (
+          <p className="text-center text-gray-500 py-4">Your polling sessions will appear here</p>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Timestamp
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      API Type
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Polling Rate
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Devices Polled
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {sessions
+                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                    .map((session) => (
+                      <tr key={session.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(session.timestamp).toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {session.apiType}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {session.pollingRate / 1000}s
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {session.deviceCount}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <div className="flex space-x-2">
+                            <Link
+                              to={`/customer/${customer.customerId}/polling-visualization/${session.id}`}
+                              className="text-green-600 hover:text-green-800 px-3 py-1 bg-green-100 rounded-md"
+                            >
+                              Visualize Data
+                            </Link>
+                            <button
+                              onClick={() => handleDownloadSession(session)}
+                              className="text-blue-600 hover:text-blue-800"
+                              title="Download CSV"
+                            >
+                              <Download className="h-5 w-5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSession(session.id)}
+                              className="text-red-600 hover:text-red-800"
+                              title="Delete session"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {Math.ceil(sessions.length / itemsPerPage) > 1 && (
+              <div className="flex justify-center mt-4 space-x-2">
+                {Array.from({ length: Math.ceil(sessions.length / itemsPerPage) }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-3 py-1 rounded ${
+                      currentPage === i + 1
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
@@ -413,39 +566,26 @@ function ApplicationDashboard({ customer, msisdns }) {
 function CustomerDashboardPage() {
   const { customerId } = useParams<{ customerId: string }>();
   const [customer] = useState(() => dummyCustomers.find(c => c.customerId === customerId));
+  const [customerMsisdns] = useState(() => 
+    msisdns.filter(msisdn => msisdn.customerId === customerId)
+  );
+  
+  const [metrics] = useState({
+    totalAPICalls: dashboardMetrics.apiCalls.total,
+    avgResponseTime: dashboardMetrics.responseTime.average,
+    errorRate: dashboardMetrics.errors.rate,
+    successRate: dashboardMetrics.success.rate
+  });
+
   const [selectedAPI, setSelectedAPI] = useState('all');
   const [timeRange, setTimeRange] = useState('30d');
   const [timeSeriesData, setTimeSeriesData] = useState(() => generateTimeSeriesData(30));
   const [endpointData] = useState(() => generateEndpointData());
-  const [metrics, setMetrics] = useState({
-    totalAPICalls: 24521,
-    avgResponseTime: 85,
-    errorRate: 0.12,
-    successRate: 99.88,
-    lastPollingRequests: 0
-  });
-  const [msisdns, setMsisdns] = useState<MSISDN[]>([]);
 
   useEffect(() => {
     const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
     setTimeSeriesData(generateTimeSeriesData(days, selectedAPI));
   }, [selectedAPI, timeRange]);
-
-  useEffect(() => {
-    const dummyMSISDNs: MSISDN[] = Array.from({ length: 40 }, (_, i) => ({
-      id: `msisdn-${i + 1}`,
-      number: `+65${Math.floor(80000000 + Math.random() * 20000000)}`,
-      status: Math.random() > 0.3 ? 'ALLOWED' : 'NOT_ALLOWED',
-      type: Math.random() > 0.5 ? 'BOTH' : (Math.random() > 0.5 ? 'VOICE' : 'DATA'),
-      activationDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
-      customerId: customerId || '',
-      location: {
-        lat: 1.3521 + (Math.random() - 0.5) * 0.1,
-        lng: 103.8198 + (Math.random() - 0.5) * 0.1
-      }
-    }));
-    setMsisdns(dummyMSISDNs);
-  }, [customerId]);
 
   if (!customer) {
     return <div>Customer not found</div>;
@@ -548,6 +688,7 @@ function CustomerDashboardPage() {
               <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
           </div>
+          
           <p className="mt-2 text-sm text-green-600">↓ 0.03% from last week</p>
         </div>
 
@@ -666,7 +807,6 @@ function CustomerDashboardPage() {
           <div className="space-y-4">
             {endpointData.map((endpoint, i) => (
               <div key={i} className="flex items-center justify-between">
-                
                 <span className="text-sm text-gray-600">{endpoint.name}</span>
                 <span className="text-sm font-medium text-gray-900">
                   {endpoint.calls.toLocaleString()} calls
@@ -728,7 +868,7 @@ function CustomerDashboardPage() {
           <Layout className="h-5 w-5 text-green-600" />
           <h2 className="text-lg font-medium text-gray-900">Application Dashboard</h2>
         </div>
-        <ApplicationDashboard customer={customer} msisdns={msisdns} />
+        <ApplicationDashboard customer={customer} msisdns={customerMsisdns} />
       </div>
     </div>
   );

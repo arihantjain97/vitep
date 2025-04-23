@@ -49,11 +49,11 @@ function HomePage() {
                 Singapore's Premier API Platform
               </div>
               <Link 
-                to="/login"
+                to="/role-select"
                 className="flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 <User className="h-4 w-4 mr-2" />
-                Management Portal
+                Login
               </Link>
             </div>
           </div>

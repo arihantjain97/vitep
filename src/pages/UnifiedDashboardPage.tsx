@@ -27,6 +27,7 @@ import {
   Legend
 } from 'recharts';
 import { dummyCustomers } from '../data/dummyCustomers';
+import { dashboardMetrics } from '../data/dashboardMetrics';
 
 const TIME_RANGES = [
   { value: '24h', label: 'Last 24 hours' },
@@ -99,6 +100,12 @@ function UnifiedDashboardPage() {
   const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState('30d');
   const [selectedAPI, setSelectedAPI] = useState('all');
+  const [metrics] = useState({
+    totalAPICalls: dashboardMetrics.apiCalls.total,
+    avgResponseTime: dashboardMetrics.responseTime.average,
+    errorRate: dashboardMetrics.errors.rate,
+    successRate: dashboardMetrics.success.rate
+  });
 
   const handleCustomerChange = (customerId: string) => {
     if (customerId !== 'all') {
@@ -180,21 +187,21 @@ function UnifiedDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <MetricCard
           title="Total API Calls"
-          value={totalAPICalls.toLocaleString()}
+          value={metrics.totalAPICalls.toLocaleString()}
           trend="↑ 15% from last period"
           icon={<Activity className="h-6 w-6 text-green-600" />}
         />
         
         <MetricCard
           title="Average Response Time"
-          value="68ms"
+          value={metrics.avgResponseTime}
           trend="↓ 8ms improvement"
           icon={<Clock className="h-6 w-6 text-green-600" />}
         />
 
         <MetricCard
           title="Error Rate"
-          value="0.08%"
+          value={metrics.errorRate}
           trend="↓ 0.02% decrease"
           icon={<AlertTriangle className="h-6 w-6 text-red-600" />}
           trendColor="green"
@@ -202,7 +209,7 @@ function UnifiedDashboardPage() {
 
         <MetricCard
           title="Overall Success Rate"
-          value="99.92%"
+          value={metrics.successRate}
           trend="↑ 0.02% increase"
           icon={<CheckCircle2 className="h-6 w-6 text-green-600" />}
         />

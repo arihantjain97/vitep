@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { 
   Upload, 
@@ -9,29 +9,19 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { MSISDN } from '../types';
-
-// Generate 40 dummy MSISDNs for testing
-const generateDummyMSISDNs = (customerId: string): MSISDN[] => {
-  return Array.from({ length: 40 }, (_, i) => ({
-    id: `msisdn-${i + 1}`,
-    number: `+65${Math.floor(80000000 + Math.random() * 20000000)}`,
-    status: Math.random() > 0.3 ? 'ALLOWED' : 'NOT_ALLOWED',
-    type: Math.random() > 0.5 ? 'BOTH' : (Math.random() > 0.5 ? 'VOICE' : 'DATA'),
-    activationDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
-    customerId
-  }));
-};
+import { msisdns } from '../data/msisdns';
 
 function NetworkInfoPage() {
   const { customerId } = useParams<{ customerId: string }>();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
-  const [msisdns, setMsisdns] = useState<MSISDN[]>(generateDummyMSISDNs(customerId || ''));
+  const [customerMsisdns, setCustomerMsisdns] = useState<MSISDN[]>(
+    () => msisdns.filter(msisdn => msisdn.customerId === customerId)
+  );
 
   const itemsPerPage = 20;
-  const filteredMSISDNs = msisdns.filter(msisdn => 
+  const filteredMSISDNs = customerMsisdns.filter(msisdn => 
     msisdn.number.includes(searchTerm) ||
     msisdn.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
     msisdn.status.toLowerCase().includes(searchTerm.toLowerCase())
@@ -69,14 +59,14 @@ function NetworkInfoPage() {
           }
         }
 
-        setMsisdns(prev => [...prev, ...newMSISDNs]);
+        setCustomerMsisdns(prev => [...prev, ...newMSISDNs]);
         setNotification({
           type: 'success',
           message: `${newMSISDNs.length} MSISDNs imported successfully`
         });
 
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+        if (e.target) {
+          e.target.value = '';
         }
       };
       reader.readAsText(file);
@@ -99,7 +89,7 @@ function NetworkInfoPage() {
   };
 
   const toggleStatus = (id: string) => {
-    setMsisdns(prev => prev.map(msisdn => {
+    setCustomerMsisdns(prev => prev.map(msisdn => {
       if (msisdn.id === id) {
         return {
           ...msisdn,
@@ -144,7 +134,6 @@ function NetworkInfoPage() {
         </div>
         <div className="flex items-center space-x-4">
           <input
-            ref={fileInputRef}
             type="file"
             accept=".csv"
             onChange={handleFileUpload}
