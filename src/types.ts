@@ -50,3 +50,30 @@ export interface MSISDN {
   customerId: string;
   location: Location;
 }
+
+export interface Role {
+  email: string;
+  password: string;
+  title: string;
+  description: string;
+  color: string;
+  redirect: string;
+}
+
+export interface PollingSession {
+  id: string;
+  timestamp: number;
+  apiType: string;
+  pollingRate: number;
+  deviceCount: number;
+  data: {
+    timestamp: number;
+    avgResponseTime: number;
+    deviceData: {
+      msisdnId: string;
+      latitude: number;
+      longitude: number;
+      responseTime: number;
+    }[];
+  }[];
+}
